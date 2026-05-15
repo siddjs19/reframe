@@ -63,6 +63,7 @@ export function useVideoEditor() {
   const [error, setError] = useState<string | null>(null);
   const exportAbortControllerRef = useRef<AbortController | null>(null);
   const exportCancelledRef = useRef(false);
+  const [fileError, setFileError] = useState("");
 
   const updateRecipe = useCallback((patch: Partial<EditRecipe>) => {
     setRecipe((prev) => ({ ...prev, ...patch }));
@@ -73,6 +74,12 @@ export function useVideoEditor() {
     setStatus("idle");
     setError(null);
     setFile(null);
+    if (!selectedFile.type.startsWith("video/")) {
+    setFileError("Please upload a video file only.");
+    return;
+  }
+
+  setFileError("");
 
     // LAYER 1: Extension check
     const validExtensions = ['.mp4', '.mov', '.avi', '.webm', '.mkv'];
@@ -246,6 +253,7 @@ export function useVideoEditor() {
     error,
     updateRecipe,
     handleFileSelect,
+    fileError,
     handleExport,
     cancelExport,
     reset,
