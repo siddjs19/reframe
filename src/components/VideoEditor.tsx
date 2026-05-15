@@ -47,13 +47,14 @@ export default function VideoEditor() {
     file, duration, recipe, status, progress,
     result, error, updateRecipe,
     handleFileSelect,fileError, handleExport, reset,
+    handleFileSelect, handleExport, cancelExport, reset,
   } = useVideoEditor();
 
   const isProcessing = status === "loading-engine" || status === "exporting";
 
   return (
     <div className="min-h-screen relative flex flex-col" style={{ background: "var(--bg)" }}>
-      <ExportOverlay status={status} progress={progress} />
+      <ExportOverlay status={status} progress={progress} onCancel={cancelExport} />
 
       <div className="max-w-6xl mx-auto px-4 py-8 pb-6 flex-1 w-full">
 
@@ -68,7 +69,7 @@ export default function VideoEditor() {
           </div>
           <div className="hidden sm:flex items-center gap-2 text-[10px] font-heading font-semibold uppercase tracking-widest text-[var(--muted)] pb-1">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-pulse" />
-            No login. No ads. 100% local.
+            No login. No ads. 100% private — your video never leaves your device.
           </div>
         </header>
 
@@ -174,6 +175,9 @@ export default function VideoEditor() {
           <p className="text-[11px] font-heading text-[var(--muted)] tracking-wide">
             2026 Reframe. Free, open source, no login required.
           </p>
+<p className="text-[10px] text-[var(--muted)]">
+  All video processing happens locally in your browser using FFmpeg.wasm.
+</p>
           <a
             href="https://github.com/magic-peach/reframe"
             target="_blank"
