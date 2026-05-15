@@ -47,7 +47,11 @@ export default function VideoEditor() {
   const {
     file, duration, recipe, status, progress,
     result, error, updateRecipe,
+<<<<<<< HEAD
     handleFileSelect,fileError, handleExport, cancelExport, reset, resetSettings,
+=======
+    handleFileSelect,fileError, handleExport, reset,
+>>>>>>> bac1b8b (fix: show validation error for non-video uploads)
   } = useVideoEditor();
   const [copied, setCopied] = useState(false);
 

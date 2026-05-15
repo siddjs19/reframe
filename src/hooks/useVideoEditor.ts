@@ -61,8 +61,11 @@ export function useVideoEditor() {
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<ExportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+<<<<<<< HEAD
   const exportAbortControllerRef = useRef<AbortController | null>(null);
   const exportCancelledRef = useRef(false);
+=======
+>>>>>>> bac1b8b (fix: show validation error for non-video uploads)
   const [fileError, setFileError] = useState("");
 
   const updateRecipe = useCallback((patch: Partial<EditRecipe>) => {
