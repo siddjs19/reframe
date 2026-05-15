@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 interface Props {
   onFileSelect: (file: File) => void;
   currentFile: File | null;
+  fileError: string;
 }
 
 function fmt(bytes: number) {
@@ -17,7 +18,11 @@ function fmt(bytes: number) {
     : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function FileUpload({ onFileSelect, currentFile }: Props) {
+export default function FileUpload({
+  onFileSelect,
+  currentFile,
+  fileError,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -115,7 +120,11 @@ export default function FileUpload({ onFileSelect, currentFile }: Props) {
       <p className="text-xs text-gray-500">
         Supports: MP4, MOV, AVI, MKV, WebM, and most video formats
       </p>
-      
+      {fileError && (
+        <p className="text-xs text-red-500 mt-2 font-medium">
+          {fileError}
+        </p>
+      )}
       <input
         ref={inputRef}
         type="file"
