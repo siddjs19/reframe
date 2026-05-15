@@ -46,7 +46,7 @@ export default function VideoEditor() {
   const {
     file, duration, recipe, status, progress,
     result, error, updateRecipe,
-    handleFileSelect, handleExport, cancelExport, reset, resetSettings,
+    handleFileSelect,fileError, handleExport, cancelExport, reset, resetSettings,
   } = useVideoEditor();
 
   
@@ -77,7 +77,7 @@ export default function VideoEditor() {
 
           <div className="space-y-4">
             <div className="bg-[var(--surface)] rounded-xl p-5 border border-[var(--border)] animate-fade-in">
-              <FileUpload onFileSelect={handleFileSelect} currentFile={file} />
+              <FileUpload onFileSelect={handleFileSelect} currentFile={file} fileError={fileError} />
 
               {!file && (
               <div className="text-center text-gray-500 py-6">
