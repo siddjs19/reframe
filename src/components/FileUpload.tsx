@@ -35,7 +35,6 @@ function formatDuration(seconds: number) {
 export default function FileUpload({
   onFileSelect,
   currentFile,
-  fileError,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -208,63 +207,5 @@ export default function FileUpload({
           }}
         />
       </div>
-    );
-
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={handleDrop}
-      onClick={() => inputRef.current?.click()}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") inputRef.current?.click(); }}
-      className={cn(
-        "group flex flex-col items-center justify-center gap-4 py-12 px-6",
-        "border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200",
-        dragging
-          ? "border-film-500 bg-film-50 scale-[1.01]"
-          : "border-[var(--border)] bg-[var(--bg)] hover:border-film-400 hover:bg-film-50/40"
-      )}
-    >
-      <div className="w-20 h-20 opacity-80 group-hover:opacity-100 transition-opacity group-hover:scale-110 duration-200">
-        <LottiePlayer animationData={uploadAnim} loop autoplay />
-      </div>
-
-      <div className="text-center">
-        <p className="font-heading font-semibold text-[var(--text)] text-base">
-          Drop a video file here
-        </p>
-        <p className="text-sm text-[var(--muted)] mt-1">
-          or click to browse
-        </p>
-        <p className="text-xs text-[var(--muted)] mt-2 font-heading">
-          Ctrl+O / Cmd+O
-        </p>
-      </div>
-
-      <div className="flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm font-heading font-medium text-[var(--muted)]">
-      <FolderOpen size={14} />
-        MP4 / MOV / AVI / WebM
-      </div>
-      <p className="text-xs text-gray-500">
-        Supports: MP4, MOV, AVI, MKV, WebM, and most video formats
-      </p>
-      {fileError && (
-        <p className="text-xs text-red-500 mt-2 font-medium">
-          {fileError}
-        </p>
-      )}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="video/*"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) handleFile(f);
-        }}
-      />
-    </div>
   );
 }
