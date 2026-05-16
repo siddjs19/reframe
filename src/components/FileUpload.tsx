@@ -175,7 +175,7 @@ export default function FileUpload({
           {warning}
         </p>
       )}
-    
+      {fileError && <p className="text-sm text-red-500">{fileError}</p>}
       <div
         role="button"
         tabIndex={0}
@@ -244,6 +244,6 @@ export default function FileUpload({
           }}
         />
       </div>
-      /</div>
+      </div>
     );
   }
