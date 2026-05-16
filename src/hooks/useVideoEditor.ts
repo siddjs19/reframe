@@ -63,7 +63,6 @@ export function useVideoEditor() {
   const [error, setError] = useState<string | null>(null);
   const exportAbortControllerRef = useRef<AbortController | null>(null);
   const exportCancelledRef = useRef(false);
-  const [fileError, setFileError] = useState("");
 
   const updateRecipe = useCallback((patch: Partial<EditRecipe>) => {
     setRecipe((prev) => ({ ...prev, ...patch }));
