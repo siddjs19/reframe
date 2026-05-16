@@ -35,11 +35,12 @@ function formatDuration(seconds: number) {
     .padStart(2, "0")}`;
 }
 
+
 export default function FileUpload({
-    onFileSelect,
-    currentFile,
-    fileError,
-  }: Props){
+  onFileSelect,
+  currentFile,
+  fileError,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [dragging, setDragging] = useState(false);
@@ -174,7 +175,7 @@ export default function FileUpload({
           {warning}
         </p>
       )}
-
+    
       <div
         role="button"
         tabIndex={0}
@@ -243,6 +244,6 @@ export default function FileUpload({
           }}
         />
       </div>
-    </div>
-  )
-};
+      /</div>
+    );
+  }
