@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 import { useVideoEditor } from "@/hooks/useVideoEditor";
 import FileUpload from "./FileUpload";
 import VideoPreview from "./VideoPreview";
@@ -8,6 +8,7 @@ import FramingControl from "./FramingControl";
 import TrimControl from "./TrimControl";
 import RotateControl from "./RotateControl";
 import AudioSpeedControl from "./AudioSpeedControl";
+import FormatSelector from "./FormatSelector";
 import ExportSettings from "./ExportSettings";
 import ExportOverlay from "./ExportOverlay";
 import DownloadResult from "./DownloadResult";
@@ -48,6 +49,7 @@ export default function VideoEditor() {
     result, error, updateRecipe,
     handleFileSelect,fileError, handleExport, cancelExport, reset, resetSettings,
   } = useVideoEditor();
+  const [copied, setCopied] = useState(false);
 
   
   const isProcessing = status === "loading-engine" || status === "exporting";
@@ -211,6 +213,9 @@ export default function VideoEditor() {
 </Section>
                     <AudioSpeedControl recipe={recipe} onChange={updateRecipe} />
                   </Section>
+                  <Section icon={<SlidersHorizontal size={12} />} title="Output format" delay={190}>
+                    <FormatSelector recipe={recipe} onChange={updateRecipe} />
+                  </Section>
                   <Section icon={<SlidersHorizontal size={12} />} title="Export quality" delay={200}>
                     <ExportSettings recipe={recipe} onChange={updateRecipe} />
                   </Section>
@@ -228,6 +233,18 @@ export default function VideoEditor() {
                   <p className="font-heading font-bold text-sm">Error</p>
                   <p className="text-film-600 text-xs mt-1">{error}</p>
                 </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(error).then(() => {
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    });
+                  }}
+                  className="px-3 py-1.5 bg-[var(--border)] border border-[var(--border)] rounded-lg text-xs font-semibold hover:opacity-80 transition-colors shrink-0 whitespace-nowrap"
+                  aria-label="Copy error message to clipboard"
+                >
+                  {copied ? "Copied!" : "Copy error"}
+                </button>
                 {!error.includes("Validation Failed") && (
                   <button
                     onClick={handleExport}
@@ -281,7 +298,7 @@ export default function VideoEditor() {
                 "font-display text-2xl tracking-widest transition-all duration-200",
                 file && !isProcessing
                   ? "bg-film-600 hover:bg-film-700 hover:scale-[1.01] text-white shadow-lg shadow-film-200 active:scale-[0.98] cursor-pointer"
-                  : "bg-[var(--border)] text-[var(--muted)] cursor-not-allowed"
+                  : "bg-[var(--border)] text-[var(--muted)] opacity-40 cursor-not-allowed"
               )}
             >
               <Zap size={20} className={cn(file && !isProcessing && "animate-pulse")} />
