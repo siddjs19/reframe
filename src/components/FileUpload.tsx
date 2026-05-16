@@ -244,6 +244,6 @@ export default function FileUpload({
           }}
         />
       </div>
-      </div>
-    );
-  }
+    </div>
+  );
+}
