@@ -13,16 +13,6 @@ interface Props {
   fileError: string;
 }
 
-function fmt(bytes: number) {
-  if (bytes >= 1024 * 1024 * 1024) {
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
-  }
-
-  return bytes < 1024 * 1024
-    ? `${(bytes / 1024).toFixed(1)} KB`
-    : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 function formatDuration(seconds: number) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
@@ -225,5 +215,15 @@ export default function FileUpload({
           }}
         />
       </div>
+  );
+
+  return (
+    <div className="space-y-2">
+      {error && <p className="text-sm text-red-500">{error}</p>}
+
+      {warning && <p className="text-sm text-yellow-500">{warning}</p>}
+
+      {currentFile ? <FileInfo /> : <DropZone />}
+    </div>
   );
 }

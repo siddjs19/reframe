@@ -62,6 +62,10 @@ export function useVideoEditor() {
   const [result, setResult] = useState<ExportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  const [fileError, setFileError] = useState("");
+>>>>>>> b0078f0736d29d75d9561d4f3aad2f4abf7facf7
   const exportAbortControllerRef = useRef<AbortController | null>(null);
   const exportCancelledRef = useRef(false);
 =======
