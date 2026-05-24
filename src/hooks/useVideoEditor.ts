@@ -145,16 +145,16 @@ function validateRecipe (recipe: EditRecipe, duration: number): string | null {
   return validations.find(([condition]) => condition)?.[1] ?? null
 }
 
-function encodeRecipe(recipe: EditRecipe): string {
-  return btoa(JSON.stringify(recipe));
+function encodeRecipe (recipe: EditRecipe): string {
+  return btoa(JSON.stringify(recipe))
 }
 
-function decodeRecipe(encoded: string): Partial<EditRecipe> | null {
+function decodeRecipe (encoded: string): Partial<EditRecipe> | null {
   try {
-    const decoded = JSON.parse(atob(encoded));
-    return decoded as Partial<EditRecipe>;
+    const decoded = JSON.parse(atob(encoded))
+    return decoded as Partial<EditRecipe>
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -595,19 +595,19 @@ export function useVideoEditor() {
     exportCancelledRef.current = false
 
     try {
-      setStatus("loading-engine");
-      setProgress(0);
-      setError(null);
-      setExportStartedAt(null);
-      if (result?.blobUrl) URL.revokeObjectURL(result.blobUrl);
-      setResult(null);
+      setStatus('loading-engine')
+      setProgress(0)
+      setError(null)
+      setExportStartedAt(null)
+      if (result?.blobUrl) URL.revokeObjectURL(result.blobUrl)
+      setResult(null)
 
       await loadFFmpeg(abortController.signal, setProgress);
       if (exportCancelledRef.current) return;
 
-      const startedAt = Date.now();
-      setExportStartedAt(startedAt);
-      setStatus("exporting");
+      const startedAt = Date.now()
+      setExportStartedAt(startedAt)
+      setStatus('exporting')
 
       const exportResult = await exportVideo(
         file,
@@ -631,11 +631,11 @@ export function useVideoEditor() {
 
       setResult({
         ...exportResult,
-        exportDurationMs: Date.now() - startedAt,
-      });
-      setStatus("done");
-     }  catch (err) {
-      if (exportCancelledRef.current) return;
+        exportDurationMs: Date.now() - startedAt
+      })
+      setStatus('done')
+    } catch (err) {
+      if (exportCancelledRef.current) return
 
       console.error('export failed:', err)
       if (err instanceof FFmpegLoadError) {
@@ -649,10 +649,9 @@ export function useVideoEditor() {
       } else {
         setError('Export failed. Please try again or use a different video.')
       }
-      setExportStartedAt(null);
-      setStatus("error");
-    }
-    finally {
+      setExportStartedAt(null)
+      setStatus('error')
+    } finally {
       if (exportAbortControllerRef.current === abortController) {
         exportAbortControllerRef.current = null
       }
@@ -670,9 +669,8 @@ export function useVideoEditor() {
     overlaySize,
     recipe,
     result,
-    status,
-  ]);
-
+    status
+  ])
 
   useEffect(() => {
     if (status === 'exporting') {
@@ -780,28 +778,28 @@ export function useVideoEditor() {
   }, [])
 
   const cancelExport = useCallback(() => {
-    exportCancelledRef.current = true;
-    exportAbortControllerRef.current?.abort();
-    exportAbortControllerRef.current = null;
-    terminateFFmpeg();
-    setStatus("idle");
-    setProgress(0);
-    setError(null);
-    setExportStartedAt(null);
-  }, []);
-
+    exportCancelledRef.current = true
+    exportAbortControllerRef.current?.abort()
+    exportAbortControllerRef.current = null
+    terminateFFmpeg()
+    setStatus('idle')
+    setProgress(0)
+    setError(null)
+    setExportStartedAt(null)
+  }, [])
 
   const reset = useCallback(() => {
-    if (result?.blobUrl) URL.revokeObjectURL(result.blobUrl);
-    setFile(null);
-    setVideoMetadata(null);
-    setDuration(0);
-    setRecipe(DEFAULT_RECIPE);
-    setStatus("idle");
-    setProgress(0);
-    setResult(null);
-    setError(null);
-    setExportStartedAt(null);
+    if (result?.blobUrl) URL.revokeObjectURL(result.blobUrl)
+    setFile(null)
+    setVideoMetadata(null)
+    setDuration(0)
+    setHistory([DEFAULT_RECIPE])
+    setHistoryIndex(0)
+    setStatus('idle')
+    setProgress(0)
+    setResult(null)
+    setError(null)
+    setExportStartedAt(null)
     try {
       localStorage.removeItem(STORAGE_KEY)
     } catch {
@@ -818,12 +816,12 @@ export function useVideoEditor() {
     }
   }, [])
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const handleTimeUpdate = () => setCurrentTime(video.currentTime);
-    video.addEventListener("timeupdate", handleTimeUpdate);
-    return () => video.removeEventListener("timeupdate", handleTimeUpdate);
-  },[]);
+    const video = videoRef.current
+    if (!video) return
+    const handleTimeUpdate = () => setCurrentTime(video.currentTime)
+    video.addEventListener('timeupdate', handleTimeUpdate)
+    return () => video.removeEventListener('timeupdate', handleTimeUpdate)
+  }, [])
 
   const toggleSound = useCallback(() => {
     updateRecipe({ soundOnCompletion: !recipe.soundOnCompletion })
@@ -869,6 +867,6 @@ export function useVideoEditor() {
     setOverlayOpacity,
     recommendedPreset,
     currentTime,
-    toggleSound,
-  };
+    toggleSound
+  }
 }
