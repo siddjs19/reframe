@@ -177,6 +177,20 @@ function KeyboardShortcutsPanel () {
       label: 'Redo last change'
     },
     {
+      keys: [
+        <Kbd key='ctrl'>Ctrl</Kbd>,
+        <span key='plus1' className='text-[var(--muted)] text-xs'>
+          +
+        </span>,
+        <Kbd key='shift'>Shift</Kbd>,
+        <span key='plus2' className='text-[var(--muted)] text-xs'>
+          +
+        </span>,
+        <Kbd key='z'>Z</Kbd>
+      ],
+      label: 'Redo last change'
+    },
+    {
       keys: [<Kbd key='m'>M</Kbd>],
       label: 'Toggle audio mute'
     },
@@ -881,7 +895,7 @@ export default function VideoEditor () {
                   >
                     Redo
                     <span className='ml-2 text-[10px] font-mono text-[var(--muted)]'>
-                      Ctrl+Y
+                      Ctrl+Y / Ctrl+Shift+Z
                     </span>
                   </button>
                 </div>
