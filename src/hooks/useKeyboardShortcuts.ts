@@ -1,39 +1,44 @@
-import { useEffect } from "react";
-import { EditRecipe, ExportStatus } from "@/lib/types";
-import { PRESETS } from "@/lib/presets";
+import { useEffect } from 'react'
+import { EditRecipe, ExportStatus } from '@/lib/types'
+import { PRESETS } from '@/lib/presets'
 
 interface UseKeyboardShortcutsProps {
-  file: File | null;
-  recipe: EditRecipe;
-  resetSettings: () => void;
-  updateRecipe: (recipe: Partial<EditRecipe>) => void;
-  handleExport: () => void;
-  status: ExportStatus;
-  cancelExport: () => void;
-  onToggleShortcutsModal: () => void;
+  file: File | null
+  recipe: EditRecipe
+  undo: () => void
+  redo: () => void
+  resetSettings: () => void
+  updateRecipe: (recipe: Partial<EditRecipe>) => void
+  handleExport: () => void
+  status: ExportStatus
+  cancelExport: () => void
+  onToggleShortcutsModal: () => void
 }
 
-export function useKeyboardShortcuts({
+export function useKeyboardShortcuts ({
   file,
   recipe,
+  undo,
+  redo,
   resetSettings,
   updateRecipe,
   handleExport,
   status,
   cancelExport,
-  onToggleShortcutsModal,
+  onToggleShortcutsModal
 }: UseKeyboardShortcutsProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
+      const target = e.target as HTMLElement
       if (
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
         target.isContentEditable
-      ) return;
+      )
+        return
 
-      const isMac = navigator.platform.toUpperCase().includes("MAC");
-      const isCtrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+      const isMac = navigator.platform.toUpperCase().includes('MAC')
+      const isCtrlOrCmd = isMac ? e.metaKey : e.ctrlKey
 
       if (isCtrlOrCmd && e.shiftKey && e.key === "E") {
         e.preventDefault();
@@ -42,36 +47,55 @@ export function useKeyboardShortcuts({
         return;
       }
 
-      if (!file) return;
+      if (isCtrlOrCmd && !e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault()
+        e.stopPropagation()
+        undo()
+        return
+      }
+
+      if (
+        isCtrlOrCmd &&
+        (e.key === 'y' ||
+          e.key === 'Y' ||
+          ((e.key === 'z' || e.key === 'Z') && e.shiftKey))
+      ) {
+        e.preventDefault()
+        e.stopPropagation()
+        redo()
+        return
+      }
+
+      if (!file) return
 
       switch (e.key) {
-        case "m":
-        case "M":
-          updateRecipe({ keepAudio: !recipe.keepAudio });
-          break;
+        case 'm':
+        case 'M':
+          updateRecipe({ keepAudio: !recipe.keepAudio })
+          break
 
-        case "r":
-        case "R":
-          resetSettings();
-          break;
+        case 'r':
+        case 'R':
+          resetSettings()
+          break
 
-        case "Escape":
-          if (status === "exporting") cancelExport();
-          break;
+        case 'Escape':
+          if (status === 'exporting') cancelExport()
+          break
 
-        case "?":
-          onToggleShortcutsModal();
-          break;
+        case '?':
+          onToggleShortcutsModal()
+          break
 
         default:
-          if (e.key >= "1" && e.key <= "9") {
-            const index = parseInt(e.key) - 1;
+          if (e.key >= '1' && e.key <= '9') {
+            const index = parseInt(e.key) - 1
             if (PRESETS[index]) {
-              updateRecipe({ preset: PRESETS[index].id });
+              updateRecipe({ preset: PRESETS[index].id })
             }
           }
       }
-    };
+    }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);

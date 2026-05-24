@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useVideoEditor } from "@/hooks/useVideoEditor";
@@ -19,79 +19,99 @@ import DownloadResult from "./DownloadResult";
 import ImageOverlay from "./ImageOverlay"
 import { getPresetById } from "@/lib/presets";
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 import {
-  Layers, Crop, Scissors, RotateCw, Volume2, Type,
-  SlidersHorizontal, Zap, AlertTriangle, Github, Copy
-} from "lucide-react";
-import OnboardingTour from "./OnboardingTour";
-import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+  Layers,
+  Crop,
+  Scissors,
+  RotateCw,
+  Volume2,
+  Type,
+  SlidersHorizontal,
+  Zap,
+  AlertTriangle,
+  Github,
+  Copy
+} from 'lucide-react'
+import OnboardingTour from './OnboardingTour'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
 interface SectionProps {
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-  delay?: number;
+  icon: React.ReactNode
+  title: string
+  children: React.ReactNode
+  delay?: number
 }
 
-function Section({ icon, title, children, delay = 0 }: SectionProps) {
+function Section ({ icon, title, children, delay = 0 }: SectionProps) {
   return (
     <div
-      className="space-y-3 animate-fade-in"
+      className='space-y-3 animate-fade-in'
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="flex items-center gap-2">
-        <span className="text-film-500 opacity-80">{icon}</span>
-        <h3 className="text-sm font-heading font-bold uppercase tracking-widest text-[var(--muted)]">
+      <div className='flex items-center gap-2'>
+        <span className='text-film-500 opacity-80'>{icon}</span>
+        <h3 className='text-sm font-heading font-bold uppercase tracking-widest text-[var(--muted)]'>
           {title}
         </h3>
-        <div className="flex-1 h-px bg-[var(--border)]" />
+        <div className='flex-1 h-px bg-[var(--border)]' />
       </div>
       {children}
     </div>
-  );
+  )
 }
 
 /** Accordion section with collapsible content. */
-function AccordionSection({
+function AccordionSection ({
   id,
   icon,
   title,
   children,
   isOpen,
   onToggle,
-  delay = 0,
+  delay = 0
 }: {
-  id: string;
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-  isOpen: boolean;
-  onToggle: () => void;
-  delay?: number;
+  id: string
+  icon: React.ReactNode
+  title: string
+  children: React.ReactNode
+  isOpen: boolean
+  onToggle: () => void
+  delay?: number
 }) {
   return (
-    <div className="animate-fade-in" style={{ animationDelay: `${delay}ms` }}>
+    <div className='animate-fade-in' style={{ animationDelay: `${delay}ms` }}>
       <button
-        type="button"
+        type='button'
         aria-expanded={isOpen}
         aria-controls={`${id}-panel`}
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-[var(--border)] transition-colors duration-150"
+        className='w-full flex items-center justify-between px-3 py-2 text-left hover:bg-[var(--border)] transition-colors duration-150'
       >
-        <div className="flex items-center gap-2">
-          <span className="text-film-500 opacity-80">{icon}</span>
-          <span className="text-sm font-heading font-bold uppercase tracking-widest text-[var(--muted)]">{title}</span>
+        <div className='flex items-center gap-2'>
+          <span className='text-film-500 opacity-80'>{icon}</span>
+          <span className='text-sm font-heading font-bold uppercase tracking-widest text-[var(--muted)]'>
+            {title}
+          </span>
         </div>
         <svg
-          aria-hidden="true"
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          className={cn("text-[var(--muted)] transition-transform duration-200", isOpen && "rotate-180")}
+          aria-hidden='true'
+          width='12'
+          height='12'
+          viewBox='0 0 12 12'
+          fill='none'
+          className={cn(
+            'text-[var(--muted)] transition-transform duration-200',
+            isOpen && 'rotate-180'
+          )}
         >
-          <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d='M2 4l4 4 4-4'
+            stroke='currentColor'
+            strokeWidth='1.5'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
         </svg>
       </button>
 
@@ -102,152 +122,203 @@ function AccordionSection({
           isOpen ? "block" : "hidden"
         )}
       >
-        <div className="px-3 pt-3 pb-0">{children}</div>
+        <div className='px-3 pt-3 pb-0'>{children}</div>
       </div>
     </div>
-  );
+  )
 }
 
 /** Inline keyboard hint badge. */
-function Kbd({ children }: { children: React.ReactNode }) {
+function Kbd ({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="inline-flex items-center justify-center min-w-[1.5rem] px-1.5 py-0.5 rounded border border-[var(--border)] bg-[var(--bg)] text-[10px] font-mono text-[var(--muted)] leading-none">
+    <kbd className='inline-flex items-center justify-center min-w-[1.5rem] px-1.5 py-0.5 rounded border border-[var(--border)] bg-[var(--bg)] text-[10px] font-mono text-[var(--muted)] leading-none'>
       {children}
     </kbd>
-  );
+  )
 }
 
 /** Collapsible panel that lists all keyboard shortcuts. */
-function KeyboardShortcutsPanel() {
-  const [open, setOpen] = useState(false);
+function KeyboardShortcutsPanel () {
+  const [open, setOpen] = useState(false)
 
   const shortcuts: { keys: React.ReactNode[]; label: string }[] = [
-  {
-    keys: [
-      <Kbd key="ctrl">Ctrl</Kbd>,
-      <span key="plus1" className="text-[var(--muted)] text-xs">+</span>,
-      <Kbd key="shift">Shift</Kbd>,
-      <span key="plus2" className="text-[var(--muted)] text-xs">+</span>,
-      <Kbd key="e">E</Kbd>
-    ],
-    label: "Export video",
-  },
-  {
-    keys: [<Kbd key="m">M</Kbd>],
-    label: "Toggle audio mute",
-  },
-  {
-    keys: [<Kbd key="r">R</Kbd>],
-    label: "Reset all settings",
-  },
-  {
-    keys: [<Kbd key="esc">Esc</Kbd>],
-    label: "Cancel export",
-  },
-  {
-    keys: [<Kbd key="1">1</Kbd>, <span key="dash" className="text-[var(--muted)] text-xs">–</span>, <Kbd key="9">9</Kbd>],
-    label: "Switch preset by index",
-  },
-  {
-    keys: [<Kbd key="question">?</Kbd>],
-    label: "Toggle this panel",
-  },
-];
+    {
+      keys: [
+        <Kbd key='ctrl'>Ctrl</Kbd>,
+        <span key='plus1' className='text-[var(--muted)] text-xs'>
+          +
+        </span>,
+        <Kbd key='shift'>Shift</Kbd>,
+        <span key='plus2' className='text-[var(--muted)] text-xs'>
+          +
+        </span>,
+        <Kbd key='e'>E</Kbd>
+      ],
+      label: 'Export video'
+    },
+    {
+      keys: [
+        <Kbd key='ctrl'>Ctrl</Kbd>,
+        <span key='plus' className='text-[var(--muted)] text-xs'>
+          +
+        </span>,
+        <Kbd key='z'>Z</Kbd>
+      ],
+      label: 'Undo last change'
+    },
+    {
+      keys: [
+        <Kbd key='ctrl'>Ctrl</Kbd>,
+        <span key='plus1' className='text-[var(--muted)] text-xs'>
+          +
+        </span>,
+        <Kbd key='y'>Y</Kbd>
+      ],
+      label: 'Redo last change'
+    },
+    {
+      keys: [<Kbd key='m'>M</Kbd>],
+      label: 'Toggle audio mute'
+    },
+    {
+      keys: [<Kbd key='r'>R</Kbd>],
+      label: 'Reset all settings'
+    },
+    {
+      keys: [<Kbd key='esc'>Esc</Kbd>],
+      label: 'Cancel export'
+    },
+    {
+      keys: [
+        <Kbd key='1'>1</Kbd>,
+        <span key='dash' className='text-[var(--muted)] text-xs'>
+          –
+        </span>,
+        <Kbd key='9'>9</Kbd>
+      ],
+      label: 'Switch preset by index'
+    },
+    {
+      keys: [<Kbd key='question'>?</Kbd>],
+      label: 'Toggle this panel'
+    }
+  ]
 
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] animate-fade-in overflow-hidden">
+    <div className='rounded-xl border border-[var(--border)] bg-[var(--surface)] animate-fade-in overflow-hidden'>
       <button
-        type="button"
+        type='button'
         aria-expanded={open}
-        aria-controls="keyboard-shortcuts-list"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-[var(--border)] transition-colors duration-150"
+        aria-controls='keyboard-shortcuts-list'
+        onClick={() => setOpen(v => !v)}
+        className='w-full flex items-center justify-between px-4 py-3 text-left hover:bg-[var(--border)] transition-colors duration-150'
       >
-        <span className="text-[10px] font-heading font-bold uppercase tracking-widest text-[var(--muted)] flex items-center gap-2">
+        <span className='text-[10px] font-heading font-bold uppercase tracking-widest text-[var(--muted)] flex items-center gap-2'>
           <Kbd>⌨</Kbd>
           Keyboard Shortcuts
         </span>
         <svg
-          aria-hidden="true"
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          className={cn("text-[var(--muted)] transition-transform duration-200", open && "rotate-180")}
+          aria-hidden='true'
+          width='12'
+          height='12'
+          viewBox='0 0 12 12'
+          fill='none'
+          className={cn(
+            'text-[var(--muted)] transition-transform duration-200',
+            open && 'rotate-180'
+          )}
         >
-          <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d='M2 4l4 4 4-4'
+            stroke='currentColor'
+            strokeWidth='1.5'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
         </svg>
       </button>
 
       {open && (
         <ul
-          id="keyboard-shortcuts-list"
-          className="px-4 pb-3 space-y-2 border-t border-[var(--border)]"
+          id='keyboard-shortcuts-list'
+          className='px-4 pb-3 space-y-2 border-t border-[var(--border)]'
         >
           {shortcuts.map(({ keys, label }) => (
-            <li key={label} className="flex items-center justify-between gap-3 pt-2">
-              <span className="text-xs text-[var(--muted)]">{label}</span>
-              <span className="flex items-center gap-1 shrink-0">{keys}</span>
+            <li
+              key={label}
+              className='flex items-center justify-between gap-3 pt-2'
+            >
+              <span className='text-xs text-[var(--muted)]'>{label}</span>
+              <span className='flex items-center gap-1 shrink-0'>{keys}</span>
             </li>
           ))}
         </ul>
       )}
     </div>
-  );
+  )
 }
 
-export default function VideoEditor() {
+export default function VideoEditor () {
   const {
     file, duration, recipe, status, progress,
-    result, error, exportStartedAt, updateRecipe,
+    result, error, exportStartedAt, updateRecipe,undo,redo,canUndo,canRedo,
     handleFileSelect, fileError, handleExport, cancelExport, reset, resetSettings,
     videoRef,
     seekTo,
-    overlayFile, setOverlayFile,
-    overlayPosition, setOverlayPosition,
-    overlaySize, setOverlaySize,
-    overlayOpacity, setOverlayOpacity,
+    overlayFile,
+    setOverlayFile,
+    overlayPosition,
+    setOverlayPosition,
+    overlaySize,
+    setOverlaySize,
+    overlayOpacity,
+    setOverlayOpacity,
     recommendedPreset,
     currentTime,
-    toggleSound,
-  } = useVideoEditor();
+    toggleSound
+  } = useVideoEditor()
 
   useKeyboardShortcuts({
     file,
     recipe,
+    undo,
+    redo,
     resetSettings,
     updateRecipe,
     handleExport,
     status,
     cancelExport,
-    onToggleShortcutsModal: () => {},
-  });
+    onToggleShortcutsModal: () => {}
+  })
 
-  const [copied, setCopied] = useState(false);
-  const [shareCopied, setShareCopied] = useState(false);
-  const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false)
+  const [shareCopied, setShareCopied] = useState(false)
+  const [selectedTextId, setSelectedTextId] = useState<string | null>(null)
   const [openSections, setOpenSections] = useState({
     resize: true,
     trim: false,
     rotation: false,
     text: false,
     audio: false,
-    export: false,
-  });
+    export: false
+  })
 
   const toggleSection = (key: keyof typeof openSections) =>
-    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  const downloadRef = useRef<HTMLDivElement>(null);
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }))
+  const downloadRef = useRef<HTMLDivElement>(null)
 
   /**
    * Updates a text overlay property and syncs with recipe.
    */
-  const handleUpdateTextOverlay = (id: string, updates: Partial<TextOverlay>) => {
-    const updatedOverlays = (recipe.textOverlays || []).map((overlay) =>
+  const handleUpdateTextOverlay = (
+    id: string,
+    updates: Partial<TextOverlay>
+  ) => {
+    const updatedOverlays = (recipe.textOverlays || []).map(overlay =>
       overlay.id === id ? { ...overlay, ...updates } : overlay
-    );
-    updateRecipe({ textOverlays: updatedOverlays });
-  };
+    )
+    updateRecipe({ textOverlays: updatedOverlays })
+  }
 
   const handleCopyLink = () => {
     if (typeof window === "undefined") return;
@@ -262,17 +333,20 @@ export default function VideoEditor() {
   };
 
   useEffect(() => {
-    if (status === "done" && downloadRef.current) {
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (status === 'done' && downloadRef.current) {
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches
       downloadRef.current.scrollIntoView({
-        behavior: prefersReducedMotion ? "instant" : "smooth",
-        block: "center",
-      });
+        behavior: prefersReducedMotion ? 'instant' : 'smooth',
+        block: 'center'
+      })
     }
-  }, [status]);
+  }, [status])
 
-  const isProcessing = status === "loading-engine" || status === "exporting";
-  const isMac = typeof navigator !== "undefined" && /Mac/i.test(navigator.platform);
+  const isProcessing = status === 'loading-engine' || status === 'exporting'
+  const isMac =
+    typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform)
 
   const intervalSeconds = useMemo(() => {
     if (duration <= 30) return 2;
@@ -284,7 +358,7 @@ export default function VideoEditor() {
   const videoSrc = useMemo(
     () => (file ? URL.createObjectURL(file) : null),
     [file]
-  );
+  )
 
   const exportSummary = useMemo(() => {
     const preset = getPresetById(recipe.preset);
@@ -304,9 +378,9 @@ export default function VideoEditor() {
 
   useEffect(() => {
     return () => {
-      if (videoSrc) URL.revokeObjectURL(videoSrc);
-    };
-  }, [videoSrc]);
+      if (videoSrc) URL.revokeObjectURL(videoSrc)
+    }
+  }, [videoSrc])
 
   return (
     <div className="min-h-screen relative flex flex-col" style={{ background: "var(--bg)" }}>
@@ -318,10 +392,10 @@ export default function VideoEditor() {
       />
       <OnboardingTour />
 
-      <div aria-live="polite" aria-atomic="true" className="sr-only">
-        {status === "exporting" && `Exporting video: ${progress}%`}
-        {status === "done" && "Export complete! Video ready to download."}
-        {status === "error" && `Export failed: ${error}`}
+      <div aria-live='polite' aria-atomic='true' className='sr-only'>
+        {status === 'exporting' && `Exporting video: ${progress}%`}
+        {status === 'done' && 'Export complete! Video ready to download.'}
+        {status === 'error' && `Export failed: ${error}`}
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-8 pb-6 flex-1 w-full">
@@ -373,14 +447,14 @@ export default function VideoEditor() {
               <FileUpload onFileSelect={handleFileSelect} currentFile={file} fileError={fileError} duration={duration} />
 
               {!file && (
-                <div className="text-center text-[var(--muted)] py-6">
+                <div className='text-center text-[var(--muted)] py-6'>
                   <p>Upload a video to get started</p>
-                  <p className="text-sm">Supports MP4, MOV, WebM and more</p>
+                  <p className='text-sm'>Supports MP4, MOV, WebM and more</p>
                 </div>
               )}
 
               {file && (
-                <div className="mt-4 animate-fade-in">
+                <div className='mt-4 animate-fade-in'>
                   <VideoPreview
                     file={file}
                     recipe={recipe}
@@ -390,7 +464,7 @@ export default function VideoEditor() {
                     onUpdateText={handleUpdateTextOverlay}
                   />
 
-                  <div className="mt-3">
+                  <div className='mt-3'>
                     <ThumbnailStrip
                       videoSrc={videoSrc}
                       duration={duration}
@@ -406,22 +480,24 @@ export default function VideoEditor() {
             </div>
 
             {file && file.size > 100 * 1024 * 1024 && (
-              <p className="text-[var(--warning)] text-sm">
+              <p className='text-[var(--warning)] text-sm'>
                 ⚠️ Large file - processing may take several minutes
               </p>
             )}
             {file && (
-              <div className={cn(
-                "grid grid-cols-1 gap-4",
-                isProcessing && "pointer-events-none opacity-50"
-              )}>
-                <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-6">
+              <div
+                className={cn(
+                  'grid grid-cols-1 gap-4',
+                  isProcessing && 'pointer-events-none opacity-50'
+                )}
+              >
+                <div className='bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-6'>
                   <AccordionSection
-                    id="trim"
+                    id='trim'
                     icon={<Scissors size={12} />}
-                    title="Trim"
+                    title='Trim'
                     isOpen={openSections.trim}
-                    onToggle={() => toggleSection("trim")}
+                    onToggle={() => toggleSection('trim')}
                     delay={50}
                   >
                     <TrimControl
@@ -433,22 +509,22 @@ export default function VideoEditor() {
                   </AccordionSection>
 
                   <AccordionSection
-                    id="rotation"
+                    id='rotation'
                     icon={<RotateCw size={12} />}
-                    title="Rotation"
+                    title='Rotation'
                     isOpen={openSections.rotation}
-                    onToggle={() => toggleSection("rotation")}
+                    onToggle={() => toggleSection('rotation')}
                     delay={100}
                   >
                     <RotateControl recipe={recipe} onChange={updateRecipe} />
                   </AccordionSection>
 
                   <AccordionSection
-                    id="text"
+                    id='text'
                     icon={<Type size={12} />}
-                    title="Text Overlay"
+                    title='Text Overlay'
                     isOpen={openSections.text}
-                    onToggle={() => toggleSection("text")}
+                    onToggle={() => toggleSection('text')}
                     delay={110}
                   >
                     <TextControls
@@ -489,114 +565,135 @@ export default function VideoEditor() {
                     </div>
                   </details>
                 </div>
-                <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-6">
+                <div className='bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-6'>
                   <AccordionSection
-                    id="audio"
+                    id='audio'
                     icon={<Volume2 size={12} />}
-                    title="Audio & Speed"
+                    title='Audio & Speed'
                     isOpen={openSections.audio}
-                    onToggle={() => toggleSection("audio")}
+                    onToggle={() => toggleSection('audio')}
                     delay={150}
                   >
-                    <AudioSpeedControl recipe={recipe} onChange={updateRecipe} />
+                    <AudioSpeedControl
+                      recipe={recipe}
+                      onChange={updateRecipe}
+                    />
                   </AccordionSection>
                   <Section
                     icon={<SlidersHorizontal size={12} />}
-                    title="Adjustments"
+                    title='Adjustments'
                     delay={175}
                   >
-                    <div className="space-y-5">
+                    <div className='space-y-5'>
                       {/* Brightness */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <label htmlFor="brightness-slider">Brightness</label>
+                      <div className='space-y-2'>
+                        <div className='flex items-center justify-between text-xs'>
+                          <label htmlFor='brightness-slider'>Brightness</label>
                           <button
-                            type="button"
+                            type='button'
                             onClick={() => updateRecipe({ brightness: 0 })}
-                            className="text-film-500 hover:underline"
-                            aria-label="reset brightness"
+                            className='text-film-500 hover:underline'
+                            aria-label='reset brightness'
                           >
                             Reset
                           </button>
                         </div>
                         <input
-                          id="brightness-slider"
-                          type="range"
-                          min="-1"
-                          max="1"
-                          step="0.1"
+                          id='brightness-slider'
+                          type='range'
+                          min='-1'
+                          max='1'
+                          step='0.1'
                           value={recipe.brightness}
-                          onChange={(e) => updateRecipe({ brightness: Number(e.target.value) })}
-                          aria-label="Adjust brightness"
-                          className="w-full accent-film-600"
+                          onChange={e =>
+                            updateRecipe({ brightness: Number(e.target.value) })
+                          }
+                          aria-label='Adjust brightness'
+                          className='w-full accent-film-600'
                         />
                       </div>
                       {/* Contrast */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <label htmlFor="contrast-slider">Contrast</label>
+                      <div className='space-y-2'>
+                        <div className='flex items-center justify-between text-xs'>
+                          <label htmlFor='contrast-slider'>Contrast</label>
                           <button
-                            type="button"
+                            type='button'
                             onClick={() => updateRecipe({ contrast: 1 })}
-                            className="text-film-500 hover:underline"
-                            aria-label="reset-contrast"
+                            className='text-film-500 hover:underline'
+                            aria-label='reset-contrast'
                           >
                             Reset
                           </button>
                         </div>
                         <input
-                          id="contrast-slider"
-                          type="range"
-                          min="0"
-                          max="2"
-                          step="0.1"
+                          id='contrast-slider'
+                          type='range'
+                          min='0'
+                          max='2'
+                          step='0.1'
                           value={recipe.contrast}
-                          onChange={(e) => updateRecipe({ contrast: Number(e.target.value) })}
-                          aria-label="Adjust contrast"
-                          className="w-full accent-film-600"
+                          onChange={e =>
+                            updateRecipe({ contrast: Number(e.target.value) })
+                          }
+                          aria-label='Adjust contrast'
+                          className='w-full accent-film-600'
                         />
                       </div>
                       {/* Saturation */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <label htmlFor="saturation-slider">Saturation</label>
+                      <div className='space-y-2'>
+                        <div className='flex items-center justify-between text-xs'>
+                          <label htmlFor='saturation-slider'>Saturation</label>
                           <button
-                            type="button"
+                            type='button'
                             onClick={() => updateRecipe({ saturation: 1 })}
-                            className="text-film-500 hover:underline"
-                            aria-label="reset-saturation"
+                            className='text-film-500 hover:underline'
+                            aria-label='reset-saturation'
                           >
                             Reset
                           </button>
                         </div>
                         <input
-                          id="saturation-slider"
-                          type="range"
-                          min="0"
-                          max="3"
-                          step="0.1"
+                          id='saturation-slider'
+                          type='range'
+                          min='0'
+                          max='3'
+                          step='0.1'
                           value={recipe.saturation}
-                          onChange={(e) => updateRecipe({ saturation: Number(e.target.value) })}
-                          aria-label="Adjust saturation"
-                          className="w-full accent-film-600"
+                          onChange={e =>
+                            updateRecipe({ saturation: Number(e.target.value) })
+                          }
+                          aria-label='Adjust saturation'
+                          className='w-full accent-film-600'
                         />
                       </div>
                     </div>
                   </Section>
-                  <Section icon={<SlidersHorizontal size={12} />} title="Output format" delay={190}>
+                  <Section
+                    icon={<SlidersHorizontal size={12} />}
+                    title='Output format'
+                    delay={190}
+                  >
                     <FormatSelector recipe={recipe} onChange={updateRecipe} />
                   </Section>
                   <AccordionSection
-                    id="export"
+                    id='export'
                     icon={<SlidersHorizontal size={12} />}
-                    title="Export"
+                    title='Export'
                     isOpen={openSections.export}
-                    onToggle={() => toggleSection("export")}
+                    onToggle={() => toggleSection('export')}
                     delay={200}
                   >
-                    <ExportSettings recipe={recipe} duration={duration} onChange={updateRecipe} />
+                    <ExportSettings
+                      recipe={recipe}
+                      duration={duration}
+                      onChange={updateRecipe}
+                    />
                   </AccordionSection>
-                  <Section icon={<Layers size={12} />} title="Image overlay" delay={120}>
+                  <Section
+                    icon={<Layers size={12} />}
+                    title='Image overlay'
+                    delay={120}
+                  >
                     <ImageOverlay
                       overlayFile={overlayFile}
                       setOverlayFile={setOverlayFile}
@@ -642,18 +739,21 @@ export default function VideoEditor() {
               </div>
             )}
 
-            {status === "error" && error && (
+            {status === 'error' && error && (
               <div
-                role="status"
-                className="flex items-start gap-3 p-4 bg-film-50 border border-film-200 rounded-xl text-film-800 text-sm animate-fade-in"
+                role='status'
+                className='flex items-start gap-3 p-4 bg-film-50 border border-film-200 rounded-xl text-film-800 text-sm animate-fade-in'
               >
-                <AlertTriangle size={16} className="shrink-0 mt-0.5 text-film-500" />
-                <div className="flex-1">
-                  <p className="font-heading font-bold text-sm">Error</p>
-                  <p className="text-film-600 text-sm mt-1">{error}</p>
+                <AlertTriangle
+                  size={16}
+                  className='shrink-0 mt-0.5 text-film-500'
+                />
+                <div className='flex-1'>
+                  <p className='font-heading font-bold text-sm'>Error</p>
+                  <p className='text-film-600 text-sm mt-1'>{error}</p>
                 </div>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => {
                     navigator.clipboard.writeText(error).then(() => {
                       setCopied(true);
@@ -662,16 +762,16 @@ export default function VideoEditor() {
                       console.error("Failed to copy error to clipboard:", err);
                     });
                   }}
-                  className="px-3 py-1.5 bg-[var(--border)] border border-[var(--border)] rounded-lg text-sm font-semibold hover:opacity-80 transition-colors shrink-0 whitespace-nowrap"
-                  aria-label="Copy error message to clipboard"
+                  className='px-3 py-1.5 bg-[var(--border)] border border-[var(--border)] rounded-lg text-sm font-semibold hover:opacity-80 transition-colors shrink-0 whitespace-nowrap'
+                  aria-label='Copy error message to clipboard'
                 >
-                  {copied ? "Copied!" : "Copy error"}
+                  {copied ? 'Copied!' : 'Copy error'}
                 </button>
-                {!error.includes("Validation Failed") && (
+                {!error.includes('Validation Failed') && (
                   <button
-                    type="button"
+                    type='button'
                     onClick={handleExport}
-                    className="px-3 py-1.5 bg-[var(--error-bg)] border border-[var(--error-border)] rounded-lg text-sm font-semibold hover:bg-[var(--error-hover)] hover:border-[var(--error)] text-[var(--text)] transition-colors shrink-0 whitespace-nowrap"
+                    className='px-3 py-1.5 bg-[var(--error-bg)] border border-[var(--error-border)] rounded-lg text-sm font-semibold hover:bg-[var(--error-hover)] hover:border-[var(--error)] text-[var(--text)] transition-colors shrink-0 whitespace-nowrap'
                   >
                     Retry Export
                   </button>
@@ -679,9 +779,14 @@ export default function VideoEditor() {
               </div>
             )}
 
-            {status === "done" && result && (
-              <div role="status" className="animate-fade-in" ref={downloadRef}>
-                <DownloadResult result={result} onReset={reset} soundOnCompletion={recipe.soundOnCompletion} onToggleSound={toggleSound} />
+            {status === 'done' && result && (
+              <div role='status' className='animate-fade-in' ref={downloadRef}>
+                <DownloadResult
+                  result={result}
+                  onReset={reset}
+                  soundOnCompletion={recipe.soundOnCompletion}
+                  onToggleSound={toggleSound}
+                />
               </div>
             )}
           </div>
@@ -695,24 +800,30 @@ export default function VideoEditor() {
                 <p className="text-[10px] font-heading font-bold text-film-600 uppercase tracking-widest">
                   Getting Started
                 </p>
-                <p className="text-xs text-[var(--muted)] mt-1">
+                <p className='text-xs text-[var(--muted)] mt-1'>
                   Upload a video file to enable these export settings.
                 </p>
               </div>
             )}
-            <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-6 animate-fade-in" style={{ animationDelay: "50ms" }}>
+            <div
+              className='bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-6 animate-fade-in'
+              style={{ animationDelay: '50ms' }}
+            >
               <AccordionSection
-                id="resize"
+                id='resize'
                 icon={<Layers size={12} />}
-                title="Resize & Aspect Ratio"
+                title='Resize & Aspect Ratio'
                 isOpen={openSections.resize}
-                onToggle={() => toggleSection("resize")}
+                onToggle={() => toggleSection('resize')}
                 delay={50}
               >
                 {recommendedPreset && (
-                  <div className="mb-4 rounded-2xl border border-film-200 bg-film-50 p-3 text-sm text-film-700">
+                  <div className='mb-4 rounded-2xl border border-film-200 bg-film-50 p-3 text-sm text-film-700'>
                     <p>
-                      We detected a {recommendedPreset.label.replace(/\s/g, "")} video → Recommended: {(recommendedPreset.platform.split("·")[0] ?? "").trim()} ({recommendedPreset.label.replace(/\s/g, "")})
+                      We detected a {recommendedPreset.label.replace(/\s/g, '')}{' '}
+                      video → Recommended:{' '}
+                      {(recommendedPreset.platform.split('·')[0] ?? '').trim()}{' '}
+                      ({recommendedPreset.label.replace(/\s/g, '')})
                     </p>
                   </div>
                 )}
@@ -722,22 +833,58 @@ export default function VideoEditor() {
                 </div>
               </AccordionSection>
 
-              <div className="pt-2 flex justify-center items-center gap-6">
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="flex items-center gap-1.5 text-xs font-heading font-bold uppercase tracking-widest text-film-500 hover:text-film-600 hover:opacity-100 transition-all cursor-pointer"
-                >
-                  <Copy size={12} />
-                  {shareCopied ? "Copied!" : "Copy Link"}
-                </button>
-                <button
-                  type="button"
-                  onClick={resetSettings}
-                  className="text-sm font-heading font-bold uppercase tracking-widest text-[var(--muted)] hover:text-film-600 transition-all opacity-60 hover:opacity-100"
-                >
-                  Reset all settings
-                </button>
+              <div className='pt-2 flex flex-col gap-3'>
+                <div className='flex justify-between items-center gap-2'>
+                  <button
+                    type='button'
+                    onClick={handleCopyLink}
+                    className='flex items-center gap-1.5 text-xs font-heading font-bold uppercase tracking-widest text-film-500 hover:text-film-600 hover:opacity-100 transition-all cursor-pointer'
+                  >
+                    <Copy size={12} />
+                    {shareCopied ? 'Copied!' : 'Copy Link'}
+                  </button>
+                  <button
+                    type='button'
+                    onClick={resetSettings}
+                    className='text-sm font-heading font-bold uppercase tracking-widest text-[var(--muted)] hover:text-film-600 transition-all opacity-60 hover:opacity-100'
+                  >
+                    Reset all settings
+                  </button>
+                </div>
+                <div className='flex flex-wrap gap-2'>
+                  <button
+                    type='button'
+                    onClick={undo}
+                    disabled={!canUndo}
+                    className={cn(
+                      'rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold transition-colors',
+                      canUndo
+                        ? 'bg-[var(--surface)] text-[var(--text)] hover:border-film-500 hover:text-film-900'
+                        : 'bg-[var(--border)] text-[var(--muted)] cursor-not-allowed'
+                    )}
+                  >
+                    Undo
+                    <span className='ml-2 text-[10px] font-mono text-[var(--muted)]'>
+                      Ctrl+Z
+                    </span>
+                  </button>
+                  <button
+                    type='button'
+                    onClick={redo}
+                    disabled={!canRedo}
+                    className={cn(
+                      'rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold transition-colors',
+                      canRedo
+                        ? 'bg-[var(--surface)] text-[var(--text)] hover:border-film-500 hover:text-film-900'
+                        : 'bg-[var(--border)] text-[var(--muted)] cursor-not-allowed'
+                    )}
+                  >
+                    Redo
+                    <span className='ml-2 text-[10px] font-mono text-[var(--muted)]'>
+                      Ctrl+Y
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -750,28 +897,31 @@ export default function VideoEditor() {
             )}
 
             <button
-              id="export-button"
-              type="button"
+              id='export-button'
+              type='button'
               onClick={handleExport}
-                disabled={!file || isProcessing}
-                aria-label='Export video'
-                aria-disabled={!file || isProcessing ? "true" : undefined}
-                title={!file ? "Upload a video to enable export" : undefined}
+              disabled={!file || isProcessing}
+              aria-label='Export video'
+              aria-disabled={!file || isProcessing ? 'true' : undefined}
+              title={!file ? 'Upload a video to enable export' : undefined}
               className={cn(
-                "w-full flex items-center justify-center gap-3 py-5 min-h-[44px] rounded-xl",
-                "font-display text-2xl tracking-widest transition-all duration-200",
+                'w-full flex items-center justify-center gap-3 py-5 min-h-[44px] rounded-xl',
+                'font-display text-2xl tracking-widest transition-all duration-200',
                 file && !isProcessing
                   ? "bg-[var(--accent)] hover:bg-[var(--accent-hover)] hover:scale-[1.02] text-white shadow-[var(--shadow)] active:scale-[0.98] cursor-pointer"
                   : "bg-[var(--border)] text-[var(--muted)] cursor-not-allowed"
               )}
             >
-             <Zap size={20} className={cn(file && !isProcessing && "animate-pulse")} />
-              {isProcessing ? "PROCESSING" : "EXPORT"}
+              <Zap
+                size={20}
+                className={cn(file && !isProcessing && 'animate-pulse')}
+              />
+              {isProcessing ? 'PROCESSING' : 'EXPORT'}
             </button>
 
             {file && !isProcessing && (
-              <p className="text-xs text-center font-mono text-[var(--muted)] opacity-50 mt-1">
-                {isMac ? "⌘" : "Ctrl"} + Enter to export
+              <p className='text-xs text-center font-mono text-[var(--muted)] opacity-50 mt-1'>
+                {isMac ? '⌘' : 'Ctrl'} + Enter to export
               </p>
             )}
           </div>
