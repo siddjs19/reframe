@@ -179,22 +179,22 @@ export function useVideoEditor() {
     height: number;
     duration: number;
   } | null>(null);
-  const [recipe, setRecipe] = useState<EditRecipe>(() => {
-    if (typeof window === "undefined") return { ...DEFAULT_RECIPE };
-    const params = new URLSearchParams(window.location.search);
-    const encoded = params.get("settings");
-    if (encoded) {
-      const decoded = decodeRecipe(encoded);
-      if (decoded) {
-        return migrateRecipe(decoded);
-      }
-    }
-    return migrateRecipe({
-      soundOnCompletion:
-        typeof window !== "undefined" &&
-        localStorage.getItem("soundOnCompletion") === "true",
-    });
-  });
+  // const [recipe, setRecipe] = useState<EditRecipe>(() => {
+  //   if (typeof window === "undefined") return { ...DEFAULT_RECIPE };
+  //   const params = new URLSearchParams(window.location.search);
+  //   const encoded = params.get("settings");
+  //   if (encoded) {
+  //     const decoded = decodeRecipe(encoded);
+  //     if (decoded) {
+  //       return migrateRecipe(decoded);
+  //     }
+  //   }
+  //   return migrateRecipe({
+  //     soundOnCompletion:
+  //       typeof window !== "undefined" &&
+  //       localStorage.getItem("soundOnCompletion") === "true",
+  //   });
+  // });
   const createInitialRecipe = () => ({
     ...DEFAULT_RECIPE,
     soundOnCompletion:
@@ -206,7 +206,7 @@ export function useVideoEditor() {
     createInitialRecipe()
   ])
   const [historyIndex, setHistoryIndex] = useState(0)
-  // const recipe = history[historyIndex] ?? history[0] ?? createInitialRecipe()
+  const recipe = history[historyIndex] ?? history[0] ?? createInitialRecipe()
   const [status, setStatus] = useState<ExportStatus>('idle')
   const [progress, setProgress] = useState(0)
   const [result, setResult] = useState<ExportResult | null>(null)
